@@ -9,7 +9,7 @@ const spinner = ora('push dist folder to gh-pages branch...')
 const message = 'Updates [ci skip]'
 spinner.start()
 
-gh.publish(path.join(process.cwd(), 'dist', 'docs'), { message }, () => {
+gh.publish(path.join(process.cwd(), 'dist'), { message }, () => {
   spinner.stop()
   // eslint-disable-next-line no-console
   console.log(chalk.cyan('  Push complete.\n'))
