@@ -52,3 +52,10 @@ export function drawImageCover(ctx, img, x, y, w, h, offsetX, offsetY) {
   // fill image in dest. rectangle
   ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
 }
+
+export function downloadCanvas(canvas, filename = 'dolly.png') {
+  const a = document.createElement("a")
+  a.href = canvas.toDataURL()
+  a.download = filename
+  a.click()
+}

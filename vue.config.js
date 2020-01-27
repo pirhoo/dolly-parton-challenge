@@ -2,6 +2,7 @@ const { join } = require('path')
 
 module.exports = {
   lintOnSave: false,
+  publicPath: './',
   chainWebpack: config => {
     // Aliases configuration
     config.resolve.alias

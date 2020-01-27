@@ -1,31 +1,50 @@
 <template>
-  <div id="app" class="app p-3">
-    <div class="row no-gutters app__grid">
-      <label class="col-6 app__grid__placeholder" v-for="{ name, image, labelDataUrl } in networks" :key="name" :class="`app__grid__placeholder--${name}`">
-        <span class="sr-only">{{ name }}</span>
-        <input type="file" :name="name" class="app__grid__placeholder__input" @change="loadImage" />
-        <img :src="image.src" class="app__grid__placeholder__image" v-if="image" />
-        <img :src="labelDataUrl"  class="app__grid__placeholder__label" />
-      </label>
+  <div id="app" class="app d-flex flex-column">
+    <app-header class="app__container" />
+    <div class="app__container">
+      <div class="row no-gutters app__grid px-3 pt-3">
+        <label class="col-6 app__grid__placeholder" v-for="{ name, image, labelDataUrl } in networks" :key="name" :class="{ [`app__grid__placeholder--${name}`]: true, 'app__grid__placeholder--valid': !!image }">
+          <span class="sr-only">{{ name }}</span>
+          <input type="file" :name="name" class="app__grid__placeholder__input" @change="loadImage" />
+          <img :src="image.src" class="app__grid__placeholder__image" v-if="image" />
+          <img :src="labelDataUrl"  class="app__grid__placeholder__label" />
+        </label>
+      </div>
     </div>
-    <div class="py-3 d-flex justify-content-between">
-      <button class="btn btn-outline-danger " @click="resetImages">
-        Clear images
-      </button>
-      <button class="btn btn-outline-primary" v-if="isReady" @click="downloadCanvas">
-        Download
-      </button>
+    <div class="app__actions">
+      <div class="p-3 d-flex justify-content-between app__container align-items-center">
+        <button class="btn btn-danger rounded-pill" @click="resetImages" v-if="hasImages">
+          Clear all
+        </button>
+        <span v-else class="text-muted">
+          Click on the grid to add your picture.
+        </span>
+        <span class="flex-grow-1"></span>
+        <span v-if="!isReady" class="px-2">
+          {{ validNetworks.length }} / 4
+        </span>
+        <button class="btn btn-primary rounded-pill" @click="downloadCanvas">
+          Download
+        </button>
+      </div>
     </div>
     <canvas class="app__canvas" ref="canvas" height="800" width="800" />
+    <app-footer class="flex-grow-1" />
   </div>
 </template>
 
 <script>
-  import { every, find } from 'lodash'
-  import { drawImageCover } from './canvas'
+  import { find, filter } from 'lodash'
+  import { drawImageCover, downloadCanvas } from './canvas'
+  import AppFooter from './AppFooter'
+  import AppHeader from './AppHeader'
 
   export default {
     name: 'App',
+    components: {
+      AppFooter,
+      AppHeader,
+    },
     data () {
       return {
         networks: [
@@ -49,8 +68,14 @@
       this.canvas.context = this.$refs['canvas'].getContext('2d')
     },
     computed: {
+      validNetworks () {
+        return filter(this.networks, network => !!network.image)
+      },
       isReady () {
-        return every(this.networks, network => !!network.image)
+        return this.validNetworks.length === 4
+      },
+      hasImages () {
+        return this.validNetworks.length > 0
       }
     },
     methods: {
@@ -112,10 +137,7 @@
         })
       },
       downloadCanvas () {
-        // Get the result as base64
-        const dataUrl = this.$refs['canvas'].toDataURL()
-        // Open the content
-        window.open(dataUrl, "_blank")
+        downloadCanvas(this.$refs['canvas'])
       },
       dataUrlToImage (dataUrl) {
         const img = new Image()
@@ -128,11 +150,27 @@
 
 <style lang="scss">
   .app {
-    max-width: 80vh;
-    margin: auto;
+    min-height: 100vh;
+
+    @media (min-width: 70vh) {
+      margin-top: 1rem;
+    }
+
+    &__container {
+      max-width: 70vh;
+      width: 100%;
+      margin: auto;
+      background: white;
+      border-left: 4px solid black;
+      border-right: 4px solid black;
+    }
 
     &__canvas {
       display: none;
+    }
+
+    &__actions {
+      background: black;
     }
 
     &__grid {
@@ -145,29 +183,19 @@
         margin: 0;
         padding-top:50%;
         cursor: pointer;
+        background: #efefef;
+        filter: grayscale(100%);
 
-        &--linkedin  { background: #2867b2; }
-        &--facebook  { background: #3b5998; }
-        &--instagram { background: #833ab4; }
-        &--tinder    { background: #fe3c72; }
+        &--linkedin { background: #a7d0d6; }
+        &--facebook { background: #a7b8d6; }
+        &--instagram { background: #ada7d6; }
+        &--tinder { background: #d6a7b8; }
+        &--valid { background: white; }
 
-        &:after {
-          content:"";
-          z-index: 200;
-          position: absolute;
-          border: .5vh dashed rgba(white, 0.7);
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%) scale(2);
-          width: 80%;
-          padding-top: 80%;
-          transition: transform 100ms;
+        &:hover, &--valid {
+          filter: grayscale(0);
         }
 
-        &:hover:after {
-          transform: translate(-50%, -50%) scale(1);
-        }
 
         &__input {
           position: absolute;
