@@ -16,9 +16,10 @@
     &__container {
       margin: auto;
       max-width: 70vh;
+      padding: 0 0 1rem;
 
       @media (max-width: 70vh) {
-        padding: 0 1rem;
+        padding: 0 1rem 1rem;
       }
 
       .sharing-options__link {
