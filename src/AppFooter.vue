@@ -12,9 +12,14 @@
     background: black;
     color: white;
 
+
     &__container {
       margin: auto;
       max-width: 70vh;
+
+      @media (max-width: 70vh) {
+        padding: 0 1rem;
+      }
 
       .sharing-options__link {
         background: white;

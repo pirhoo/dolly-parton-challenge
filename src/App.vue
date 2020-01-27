@@ -20,7 +20,7 @@
           Click on the grid to add your picture.
         </span>
         <span class="flex-grow-1"></span>
-        <span v-if="!isReady" class="px-2">
+        <span v-if="!isReady" class="px-2 text-nowrap">
           {{ validNetworks.length }} / 4
         </span>
         <button class="btn btn-primary rounded-pill" @click="downloadCanvas">
