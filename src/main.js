@@ -7,6 +7,7 @@ import App from './App.vue'
 Vue.config.productionTip = false
 
 Murmur.config.set('sharing-options.title', "It's time you take part in the #dollypartonchallenge")
+Murmur.config.set('sharing-options.twitter-user', "pirhoo")
 
 const render = h => h(App)
 new Vue({ render }).$mount('#app')
